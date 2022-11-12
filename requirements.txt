@@ -1,0 +1,5 @@
+numpy
+PyQt5
+opencv2
+keras
+pillow
