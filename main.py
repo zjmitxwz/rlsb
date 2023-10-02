@@ -2,11 +2,10 @@ import os.path
 import sys
 import hashlib
 import time
-
 import numpy as np
 from PyQt5 import QtWidgets, QtGui, QtCore
 import cv2
-from keras.engine.saving import load_model
+from tensorflow import keras
 from keras_preprocessing.image import img_to_array
 from PIL import Image, ImageDraw, ImageFont
 
@@ -18,7 +17,7 @@ class MainWindows(QtWidgets.QWidget):
         self.detection_model_path = 'module/haarcascade_frontalface_default.xml'  # 人脸检测模型
         self.emotion_model_path = 'module/mini_XCEPTION.102-0.66.hdf5'
         self.face_detection = cv2.CascadeClassifier('module/haarcascade_frontalface_default.xml')
-        self.emotion_classifier = load_model('module/mini_XCEPTION.102-0.66.hdf5', compile=False)
+        self.emotion_classifier = keras.models.load_model('module/mini_XCEPTION.102-0.66.hdf5', compile=False)
         self.shows = None
         self.name_hash = None
         self.showImage = None
@@ -152,6 +151,7 @@ class MainWindows(QtWidgets.QWidget):
         images = cv2.flip(images, 1)
         faces = self.face_detection.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30),
                                                      flags=cv2.CASCADE_SCALE_IMAGE)
+        
         canvas = np.zeros((480, 300, 3), dtype="uint8")
         if len(faces) > 0:
             faces = sorted(faces, reverse=True,
@@ -187,8 +187,6 @@ class MainWindows(QtWidgets.QWidget):
             return [0, '未检测到人脸']
 
         return [1, '成功']
-
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     windows = MainWindows()
